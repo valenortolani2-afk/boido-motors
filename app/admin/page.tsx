@@ -22,21 +22,6 @@ const emptyCar: DraftCar = {
   description: "",
 };
 
-const fileToDataUrl = (file: File) =>
-  new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      resolve(String(reader.result ?? ""));
-    };
-
-    reader.onerror = () => {
-      reject(new Error("No se pudo leer la imagen."));
-    };
-
-    reader.readAsDataURL(file);
-  });
-
 export default function AdminCatalogPage() {
   const [catalog, setCatalog] = useState<Car[]>([]);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -57,15 +42,34 @@ export default function AdminCatalogPage() {
     }
 
     try {
-      const nextImages = await Promise.all(files.map(fileToDataUrl));
+      const formData = new FormData();
+      files.forEach((file) => formData.append("file", file));
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Fallo al subir las imágenes");
+      }
+
+      const result = (await response.json()) as { urls?: string[] };
+      const uploadedUrls = result.urls ?? [];
+
+      if (!uploadedUrls.length) {
+        throw new Error("No se recibieron URLs de las imágenes");
+      }
 
       setDraft((current) => ({
         ...current,
-        images: [...(Array.isArray(current.images) ? current.images : []), ...nextImages],
-        image: current.image || nextImages[0] || "",
+        images: [...(Array.isArray(current.images) ? current.images : []), ...uploadedUrls],
+        image: current.image || uploadedUrls[0] || "",
       }));
     } catch {
-      window.alert("No se pudieron cargar algunas imágenes. Probá con otras o con menos archivos.");
+      window.alert(
+        "No se pudieron cargar algunas imágenes. Revisá la configuración de Vercel Blob y el token de producción."
+      );
     } finally {
       event.target.value = "";
     }
