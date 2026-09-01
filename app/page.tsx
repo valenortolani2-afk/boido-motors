@@ -1,116 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { FaWhatsapp } from "react-icons/fa";
+import { cars, whatsappBaseMessage, whatsappNumber } from "./cars";
 import styles from "./page.module.css";
 
-type Car = {
-  id: number;
-  title: string;
-  year: string;
-  price: string;
-  image: string;
-  badge: string;
-  km: string;
-  fuel: string;
-  transmission: string;
-  description: string;
-};
-
-const cars: Car[] = [
-  {
-    id: 1,
-    title: "BMW Serie 3",
-    year: "2022",
-    price: "$42.500",
-    image:
-      "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&q=80",
-    badge: "Nuevo",
-    km: "18.000 km",
-    fuel: "Nafta",
-    transmission: "Automática",
-    description:
-      "Sedán premium con acabados de lujo, motor eficiente y un diseño sobrio ideal para uso diario y viajes largos.",
-  },
-  {
-    id: 2,
-    title: "Mercedes C 200",
-    year: "2021",
-    price: "$39.900",
-    image:
-      "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=80",
-    badge: "Destacado",
-    km: "22.500 km",
-    fuel: "Nafta",
-    transmission: "Automática",
-    description:
-      "Confort excepcional, tecnología avanzada y una presencia elegante que se destaca en cualquier entorno.",
-  },
-  {
-    id: 3,
-    title: "Audi A4",
-    year: "2020",
-    price: "$35.200",
-    image:
-      "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80",
-    badge: "Oferta",
-    km: "30.000 km",
-    fuel: "Diésel",
-    transmission: "Automática",
-    description:
-      "Un vehículo equilibrado, cómodo y sofisticado con excelente equipamiento y un comportamiento muy refinado.",
-  },
-  {
-    id: 4,
-    title: "Toyota Corolla",
-    year: "2023",
-    price: "$31.800",
-    image:
-      "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&w=1200&q=80",
-    badge: "Popular",
-    km: "12.800 km",
-    fuel: "Nafta",
-    transmission: "Manual",
-    description:
-      "Fiable, económico y muy bien equipado. Ideal para quien busca un auto seguro y práctico para todos los días.",
-  },
-  {
-    id: 5,
-    title: "Volkswagen Golf GTI",
-    year: "2021",
-    price: "$44.100",
-    image:
-      "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=1200&q=80",
-    badge: "Performance",
-    km: "25.000 km",
-    fuel: "Nafta",
-    transmission: "Automática",
-    description:
-      "Potencia, estilo y dinamismo para quienes buscan una experiencia más deportiva sin perder confort.",
-  },
-  {
-    id: 6,
-    title: "Renault Captur",
-    year: "2022",
-    price: "$28.600",
-    image:
-      "https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=1200&q=80",
-    badge: "SUV",
-    km: "19.400 km",
-    fuel: "Nafta",
-    transmission: "Automática",
-    description:
-      "Diseño urbano, espacio interior y gran versatilidad para la familia o uso diario con estilo.",
-  },
-];
-
 export default function Home() {
-  const [selectedCar, setSelectedCar] = useState<Car>(cars[0]);
-
-  const selectedCarIndex = useMemo(
-    () => cars.findIndex((car) => car.id === selectedCar.id),
-    [selectedCar.id]
-  );
-
+  const router = useRouter();
   return (
     <main className={styles.page}>
       <section className={styles.hero}>
@@ -119,8 +16,7 @@ export default function Home() {
           <div className={styles.brand}>AUTOCLUB</div>
           <div className={styles.navActions}>
             <a href="#catalogo">Catálogo</a>
-            <a href="#detalle">Detalle</a>
-            <a href="https://wa.me/5491123456789" target="_blank" rel="noreferrer">
+            <a href={`https://wa.me/${whatsappNumber}?text=${whatsappBaseMessage}`} target="_blank" rel="noreferrer">
               WhatsApp
             </a>
           </div>
@@ -128,7 +24,7 @@ export default function Home() {
 
         <div className={styles.heroContent}>
           <p className={styles.eyebrow}>Venta directa • 0KM y usados</p>
-          <h1>Catalogo de autos</h1>
+          <h1 className={"titulo-principal"}>VENTA PERMUTA FINANCIACION DE AUTOS USADOS</h1>
           <p className={styles.heroText}>
             Encontrá el vehículo que se adapte a tu estilo, tu rutina y tu próxima aventura.
           </p>
@@ -138,7 +34,7 @@ export default function Home() {
               Ver catálogo
             </a>
             <a
-              href="https://wa.me/5491123456789?text=Hola%2C%20quiero%20consultar%20por%20un%20auto."
+              href={`https://wa.me/${whatsappNumber}?text=${whatsappBaseMessage}`}
               target="_blank"
               rel="noreferrer"
               className={styles.secondaryButton}
@@ -154,6 +50,7 @@ export default function Home() {
           <div>
             <p className={styles.sectionLabel}>Nuestro stock</p>
             <h2>Autos seleccionados</h2>
+            <p>Nuevos y viejos</p>
           </div>
           <a
             href="https://www.instagram.com/"
@@ -169,8 +66,16 @@ export default function Home() {
           {cars.map((car) => (
             <article
               key={car.id}
-              className={`${styles.card} ${selectedCar.id === car.id ? styles.cardActive : ""}`}
-              onClick={() => setSelectedCar(car)}
+              className={styles.card}
+              onClick={() => router.push(`/car/${car.id}`)}
+              role="link"
+              tabIndex={0}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  router.push(`/car/${car.id}`);
+                }
+              }}
             >
               <div className={styles.cardImageWrap}>
                 <img src={car.image} alt={car.title} className={styles.cardImage} />
@@ -186,85 +91,85 @@ export default function Home() {
                   <span>{car.km}</span>
                   <span>{car.fuel}</span>
                 </div>
-                <button type="button" className={styles.cardButton}>
+                <Link href={`/car/${car.id}`} className={styles.cardButton}>
                   Ver publicación
-                </button>
+                </Link>
               </div>
             </article>
           ))}
         </div>
       </section>
 
-      <section id="detalle" className={styles.detailSection}>
-        <div className={styles.detailImageWrap}>
-          <img src={selectedCar.image} alt={selectedCar.title} className={styles.detailImage} />
+      <section className={styles.mapSection}>
+        <div className={styles.mapHeader}>
+          <p className={styles.sectionLabel}>Ubicación</p>
+          <h2>Encontranos en Mar del Plata</h2>
         </div>
 
-        <div className={styles.detailContent}>
-          <p className={styles.sectionLabel}>Publicación seleccionada</p>
-          <h2>{selectedCar.title}</h2>
-          <div className={styles.detailInfoRow}>
-            <span>{selectedCar.year}</span>
-            <span>{selectedCar.km}</span>
-            <span>{selectedCar.transmission}</span>
-          </div>
-          <p className={styles.detailPrice}>{selectedCar.price}</p>
-          <p className={styles.detailDescription}>{selectedCar.description}</p>
-
-          <div className={styles.detailSpecs}>
-            <div>
-              <span>Combustible</span>
-              <strong>{selectedCar.fuel}</strong>
-            </div>
-            <div>
-              <span>Transmisión</span>
-              <strong>{selectedCar.transmission}</strong>
-            </div>
-            <div>
-              <span>Estado</span>
-              <strong>{selectedCar.badge}</strong>
-            </div>
-          </div>
-
-          <div className={styles.detailActions}>
-            <a
-              href={`https://wa.me/5491123456789?text=${encodeURIComponent(
-                `Hola, me interesa el auto ${selectedCar.title}.`
-              )}`}
-              target="_blank"
-              rel="noreferrer"
-              className={styles.primaryButton}
-            >
-              Consultar por WhatsApp
-            </a>
-            <a
-              href="https://www.tiktok.com/"
-              target="_blank"
-              rel="noreferrer"
-              className={styles.secondaryButton}
-            >
-              TikTok
-            </a>
-          </div>
-
-          <div className={styles.pagination}>
-            <button
-              type="button"
-              onClick={() => setSelectedCar(cars[(selectedCarIndex - 1 + cars.length) % cars.length])}
-              aria-label="Auto anterior"
-            >
-              ← Anterior
-            </button>
-            <button
-              type="button"
-              onClick={() => setSelectedCar(cars[(selectedCarIndex + 1) % cars.length])}
-              aria-label="Próximo auto"
-            >
-              Siguiente →
-            </button>
-          </div>
+        <div className={styles.mapCard}>
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3144.34630961414!2d-57.583190225001495!3d-37.99238204426595!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9584d9373948c99f%3A0x5fa871aed0042c55!2sAlberti%205371%2C%20B7600%20Mar%20del%20Plata%2C%20Provincia%20de%20Buenos%20Aires!5e0!3m2!1ses-419!2sar!4v1788239386227!5m2!1ses-419!2sar"
+            className={styles.mapFrame}
+            loading="lazy"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+            title="Ubicación del negocio"
+          />
         </div>
       </section>
+
+      <footer className={styles.footer}>
+        <div className={styles.footerInner}>
+          <div className={styles.footerBrand}>
+            <div className={styles.footerLogo}>AUTOCLUB</div>
+            <p>
+              Venta de autos usados, financiamiento y atención personalizada para que encuentres
+              el vehículo ideal con confianza.
+            </p>
+          </div>
+
+          <div className={styles.footerColumn}>
+            <h3>Navegación</h3>
+            <ul>
+              <li><a href="#catalogo">Catálogo</a></li>
+              <li><a href={`https://wa.me/${whatsappNumber}?text=${whatsappBaseMessage}`} target="_blank" rel="noreferrer">WhatsApp</a></li>
+            </ul>
+          </div>
+
+          <div className={styles.footerColumn}>
+            <h3>Contacto</h3>
+            <ul>
+              <li><a href={`tel:${whatsappNumber}`}>+54 223 4060546</a></li>
+              <li><a href="https://www.instagram.com/" target="_blank" rel="noreferrer">Instagram</a></li>
+              <li><a href="https://www.tiktok.com/@fernandoboido?_r=1&_t=ZS-99MQAmgWEJU" target="_blank" rel="noreferrer">TikTok</a></li>
+            </ul>
+          </div>
+
+          <div className={styles.footerColumn}>
+            <h3>Horarios</h3>
+            <ul>
+              <li>Lunes a Viernes</li>
+              <li>09:00 - 17:00</li>
+              <li>Sábados por cita</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className={styles.footerBottom}>
+          <span>© 2026 AUTOCLUB</span>
+          <span>Todos los derechos reservados</span>
+        </div>
+      </footer>
+
+      <a
+        href={`https://wa.me/${whatsappNumber}?text=${whatsappBaseMessage}`}
+        target="_blank"
+        rel="noreferrer"
+        className={styles.floatingWhatsApp}
+        aria-label="Contactar por WhatsApp"
+      >
+        <FaWhatsapp className={styles.whatsappIcon} />
+      </a>
     </main>
   );
 }

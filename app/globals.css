@@ -42,6 +42,16 @@ a {
   text-decoration: none;
 }
 
+.titulo-principal {
+ /*  justify-content: center;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-top: 20px;
+   */
+  color: white;
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;

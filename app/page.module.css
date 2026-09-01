@@ -127,6 +127,29 @@
   color: #111111;
 }
 
+.whatsAppDetailButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  border-radius: 999px;
+  padding: 0.9rem 1.4rem;
+  border: 1px solid transparent;
+  font-weight: 700;
+  font-size: 0.92rem;
+  text-decoration: none;
+  cursor: pointer;
+  background: #25d366;
+  color: #ffffff;
+  box-shadow: 0 10px 24px rgba(37, 211, 102, 0.28);
+}
+
+.whatsAppDetailIcon {
+  width: 1.1rem;
+  height: 1.1rem;
+  display: block;
+}
+
 .secondaryButton {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.2);
@@ -134,7 +157,8 @@
 }
 
 .catalogSection,
-.detailSection {
+.detailSection,
+.mapSection {
   max-width: 1220px;
   margin: 0 auto;
   padding: 72px 20px;
@@ -146,6 +170,36 @@
 
 .detailSection {
   background: #ffffff;
+}
+
+.mapSection {
+  padding-top: 0;
+  padding-bottom: 90px;
+}
+
+.mapHeader {
+  margin-bottom: 24px;
+}
+
+.mapHeader h2 {
+  color: #111111;
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  letter-spacing: -0.05em;
+}
+
+.mapCard {
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  box-shadow: 0 18px 44px rgba(17, 17, 17, 0.08);
+  background: #f8f8f8;
+}
+
+.mapFrame {
+  display: block;
+  width: 100%;
+  min-height: 420px;
+  border: 0;
 }
 
 .sectionHeader {
@@ -276,6 +330,32 @@
   padding-bottom: 90px;
 }
 
+.backLinkWrap {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #111111;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 1.6rem;
+  line-height: 1;
+  box-shadow: 0 10px 24px rgba(17, 17, 17, 0.18);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.backLink:hover {
+  transform: translateX(-2px);
+}
+
 .detailImageWrap {
   border-radius: 26px;
   overflow: hidden;
@@ -371,6 +451,102 @@
   color: #ffffff;
 }
 
+.floatingWhatsApp {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #25d366;
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 10px 24px rgba(37, 211, 102, 0.38);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.floatingWhatsApp:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 16px 30px rgba(37, 211, 102, 0.46);
+}
+
+.whatsappIcon {
+  width: 32px;
+  height: 32px;
+  fill: #ffffff;
+  display: block;
+}
+
+.footer {
+  background: #0b0b0d;
+  color: #f3f4f6;
+  margin-top: 40px;
+}
+
+.footerInner {
+  max-width: 1220px;
+  margin: 0 auto;
+  padding: 56px 20px 24px;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 28px;
+}
+
+.footerBrand {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.footerLogo {
+  font-size: 1.15rem;
+  font-weight: 900;
+  letter-spacing: 0.2rem;
+}
+
+.footerBrand p,
+.footerColumn li,
+.footerColumn a {
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.8;
+  font-size: 0.95rem;
+}
+
+.footerColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footerColumn h3 {
+  font-size: 0.9rem;
+  letter-spacing: 0.12rem;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+.footerColumn ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footerBottom {
+  max-width: 1220px;
+  margin: 0 auto;
+  padding: 18px 20px 30px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.82rem;
+}
+
 @media (max-width: 900px) {
   .catalogGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -378,6 +554,10 @@
 
   .detailSection {
     grid-template-columns: 1fr;
+  }
+
+  .footerInner {
+    grid-template-columns: 1fr 1fr;
   }
 }
 
@@ -405,6 +585,15 @@
   }
 
   .sectionHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .footerInner {
+    grid-template-columns: 1fr;
+  }
+
+  .footerBottom {
     flex-direction: column;
     align-items: flex-start;
   }
