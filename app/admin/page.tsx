@@ -22,6 +22,21 @@ const emptyCar: DraftCar = {
   description: "",
 };
 
+const fileToDataUrl = (file: File) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      resolve(String(reader.result ?? ""));
+    };
+
+    reader.onerror = () => {
+      reject(new Error("No se pudo leer la imagen."));
+    };
+
+    reader.readAsDataURL(file);
+  });
+
 export default function AdminCatalogPage() {
   const [catalog, setCatalog] = useState<Car[]>([]);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -34,22 +49,26 @@ export default function AdminCatalogPage() {
   const totalCars = useMemo(() => catalog.length, [catalog]);
   const draftImages = Array.isArray(draft?.images) ? draft.images : [];
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files ?? []);
 
     if (!files.length) {
       return;
     }
 
-    const nextImages = files.map((file) => URL.createObjectURL(file));
+    try {
+      const nextImages = await Promise.all(files.map(fileToDataUrl));
 
-    setDraft((current) => ({
-      ...current,
-      images: [...current.images, ...nextImages],
-      image: current.image || nextImages[0] || "",
-    }));
-
-    event.target.value = "";
+      setDraft((current) => ({
+        ...current,
+        images: [...(Array.isArray(current.images) ? current.images : []), ...nextImages],
+        image: current.image || nextImages[0] || "",
+      }));
+    } catch {
+      window.alert("No se pudieron cargar algunas imágenes. Probá con otras o con menos archivos.");
+    } finally {
+      event.target.value = "";
+    }
   };
 
   const handleRemoveImage = (indexToRemove: number) => {

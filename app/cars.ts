@@ -146,7 +146,13 @@ export function saveCatalogCars(cars: Car[]) {
   }
 
   const normalized = cars.map(normalizeCar);
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+  } catch (error) {
+    console.error("No se pudo guardar el catálogo en localStorage:", error);
+  }
+
   return normalized;
 }
 
