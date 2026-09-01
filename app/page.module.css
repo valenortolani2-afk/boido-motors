@@ -451,6 +451,268 @@
   color: #ffffff;
 }
 
+.adminPage {
+  min-height: 100vh;
+  background: #f3f4f6;
+  color: #111111;
+  padding: 40px 20px;
+}
+
+.adminShell {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.adminHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  background: #ffffff;
+  border: 1px solid rgba(17, 17, 17, 0.06);
+  border-radius: 22px;
+  padding: 28px;
+}
+
+.adminHeader h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+  letter-spacing: -0.05em;
+}
+
+.adminBackButton,
+.primaryButtonAdmin,
+.secondaryButtonAdmin,
+.adminItemActions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.adminBackButton,
+.secondaryButtonAdmin {
+  background: #111111;
+  color: #ffffff;
+  padding: 0.8rem 1.3rem;
+  border: 1px solid #111111;
+}
+
+.primaryButtonAdmin {
+  background: #25d366;
+  color: #ffffff;
+  border: 1px solid #25d366;
+  padding: 0.9rem 1.4rem;
+}
+
+.adminStats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.adminStatCard,
+.adminFormCard,
+.adminListCard {
+  background: #ffffff;
+  border: 1px solid rgba(17, 17, 17, 0.06);
+  border-radius: 22px;
+  padding: 24px;
+}
+
+.adminStatCard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.adminStatCard span {
+  color: #4b5563;
+}
+
+.adminStatCard strong {
+  font-size: 2rem;
+  letter-spacing: -0.05em;
+}
+
+.adminFormCard h2,
+.adminListCard h2 {
+  margin: 0 0 20px;
+  font-size: 1.5rem;
+}
+
+.adminForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.adminForm label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #111111;
+  font-weight: 600;
+}
+
+.adminForm input,
+.adminForm textarea {
+  width: 100%;
+  border: 1px solid rgba(17, 17, 17, 0.12);
+  background: #f9fafb;
+  border-radius: 14px;
+  padding: 0.9rem 1rem;
+  font: inherit;
+  color: #111111;
+}
+
+.fileInputLabel input {
+  padding: 0.7rem;
+}
+
+.photoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 12px;
+}
+
+.photoItem {
+  position: relative;
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f9fafb;
+}
+
+.photoItem img {
+  display: block;
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+}
+
+.photoItem button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: none;
+  background: rgba(17, 17, 17, 0.8);
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+
+.formActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.adminList {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.adminItem {
+  display: grid;
+  grid-template-columns: 130px minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  border-radius: 18px;
+  padding: 16px;
+  background: #fafafa;
+}
+
+.adminItemImageWrap {
+  width: 130px;
+  height: 110px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #e5e7eb;
+}
+
+.adminItemImageWrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.adminItemContent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.adminItemHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.adminItemHeader h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.adminItemHeader span {
+  background: #eef2ff;
+  color: #3730a3;
+  border-radius: 999px;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.adminItemContent p {
+  margin: 0;
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+
+.adminItemContent small {
+  color: #4b5563;
+}
+
+.adminItemActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.adminItemActions button {
+  border: 1px solid rgba(17, 17, 17, 0.1);
+  background: #ffffff;
+  color: #111111;
+  padding: 0.7rem 1rem;
+}
+
+.adminDeleteButton {
+  color: #b91c1c !important;
+  border-color: rgba(185, 28, 28, 0.2) !important;
+}
+
+.emptyState {
+  color: #4b5563;
+}
+
 .floatingWhatsApp {
   position: fixed;
   right: 22px;
