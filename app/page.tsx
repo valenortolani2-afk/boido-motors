@@ -162,7 +162,7 @@ export default function Home() {
           </div>
 
           <div className={styles.footerColumn}>
-            <h3>Horrarios</h3>
+            <h3>Horarios</h3>
             <ul>
               <li>Lunes a Viernes</li>
               <li>09:00 - 17:00</li>
