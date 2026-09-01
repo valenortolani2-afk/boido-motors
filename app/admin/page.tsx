@@ -22,6 +22,53 @@ const emptyCar: DraftCar = {
   description: "",
 };
 
+const readFileAsDataUrl = (file: File) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => resolve(String(reader.result ?? ""));
+    reader.onerror = () => reject(new Error("No se pudo leer la imagen seleccionada."));
+    reader.readAsDataURL(file);
+  });
+
+const uploadDraftFiles = async (files: File[]) => {
+  try {
+    const formData = new FormData();
+    files.forEach((file) => formData.append("file", file));
+
+    const response = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    let payload: { urls?: string[]; error?: string } = {};
+    try {
+      payload = (await response.json()) as { urls?: string[]; error?: string };
+    } catch {
+      payload = {};
+    }
+
+    if (!response.ok) {
+      throw new Error(payload.error || "Fallo al subir las imágenes");
+    }
+
+    const uploadedUrls = Array.isArray(payload.urls) ? payload.urls.filter(Boolean) : [];
+    if (uploadedUrls.length > 0) {
+      return uploadedUrls;
+    }
+
+    throw new Error("No se recibieron URLs de las imágenes");
+  } catch (error) {
+    const isLocalEnvironment = typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+
+    if (isLocalEnvironment) {
+      return Promise.all(files.map((file) => readFileAsDataUrl(file)));
+    }
+
+    throw error;
+  }
+};
+
 export default function AdminCatalogPage() {
   const [catalog, setCatalog] = useState<Car[]>([]);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -42,33 +89,25 @@ export default function AdminCatalogPage() {
     }
 
     try {
-      const formData = new FormData();
-      files.forEach((file) => formData.append("file", file));
-
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error("Fallo al subir las imágenes");
-      }
-
-      const result = (await response.json()) as { urls?: string[] };
-      const uploadedUrls = result.urls ?? [];
+      const uploadedUrls = await uploadDraftFiles(files);
 
       if (!uploadedUrls.length) {
         throw new Error("No se recibieron URLs de las imágenes");
       }
 
-      setDraft((current) => ({
-        ...current,
-        images: [...(Array.isArray(current.images) ? current.images : []), ...uploadedUrls],
-        image: current.image || uploadedUrls[0] || "",
-      }));
-    } catch {
+      setDraft((current) => {
+        const mergedImages = [...(Array.isArray(current.images) ? current.images : []), ...uploadedUrls].filter(Boolean);
+        return {
+          ...current,
+          images: mergedImages,
+          image: current.image || mergedImages[0] || "",
+        };
+      });
+    } catch (error) {
       window.alert(
-        "No se pudieron cargar algunas imágenes. Revisá la configuración de Vercel Blob y el token de producción."
+        error instanceof Error
+          ? error.message
+          : "No se pudieron cargar algunas imágenes. Revisá la configuración de Vercel Blob y el token de producción."
       );
     } finally {
       event.target.value = "";
@@ -92,7 +131,7 @@ export default function AdminCatalogPage() {
 
     if (!draft.title.trim()) return;
 
-    const cleanedImages = draftImages.filter(Boolean);
+    const cleanedImages = [...new Set(draftImages.filter(Boolean))];
     const normalizedDraft: Omit<Car, "id"> = {
       title: draft.title.trim(),
       year: draft.year.trim(),
