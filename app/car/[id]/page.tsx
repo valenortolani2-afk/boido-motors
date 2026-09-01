@@ -1,20 +1,48 @@
+"use client";
+
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { FaWhatsapp } from "react-icons/fa";
-import { cars, whatsappNumber } from "../../cars";
+import { getCatalogCars, type Car, whatsappNumber } from "../../cars";
 import styles from "../../page.module.css";
 
-export default async function CarDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const car = cars.find((item) => item.id === Number(id));
+export default function CarDetailPage() {
+  const params = useParams<{ id: string }>();
+  const [car, setCar] = useState<Car | null>(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
+  useEffect(() => {
+    const selectedCar = getCatalogCars().find((item) => item.id === Number(params.id));
+    setCar(selectedCar ?? null);
+    setSelectedImageIndex(0);
+  }, [params.id]);
 
   if (!car) {
-    notFound();
+    return (
+      <main className={styles.page}>
+        <section className={styles.detailSection}>
+          <div className={styles.backLinkWrap}>
+            <Link href="/" className={styles.backLink} aria-label="Volver al catálogo">
+              ←
+            </Link>
+          </div>
+          <p className={styles.emptyState}>No se encontró la publicación.</p>
+        </section>
+      </main>
+    );
   }
+
+  const galleryImages = Array.isArray(car.images) && car.images.length > 0 ? car.images : [car.image];
+  const currentImage = galleryImages[selectedImageIndex] ?? galleryImages[0];
+
+  const goToPreviousImage = () => {
+    setSelectedImageIndex((current) => (current === 0 ? galleryImages.length - 1 : current - 1));
+  };
+
+  const goToNextImage = () => {
+    setSelectedImageIndex((current) => (current === galleryImages.length - 1 ? 0 : current + 1));
+  };
 
   return (
     <main className={styles.page}>
@@ -26,7 +54,43 @@ export default async function CarDetailPage({
         </div>
 
         <div className={styles.detailImageWrap}>
-          <img src={car.image} alt={car.title} className={styles.detailImage} />
+          <div className={styles.carouselStage}>
+            <button
+              type="button"
+              className={styles.carouselButton}
+              onClick={goToPreviousImage}
+              aria-label="Imagen anterior"
+            >
+              ←
+            </button>
+
+            <img src={currentImage} alt={car.title} className={styles.detailImage} />
+
+            <button
+              type="button"
+              className={styles.carouselButton}
+              onClick={goToNextImage}
+              aria-label="Imagen siguiente"
+            >
+              →
+            </button>
+          </div>
+
+          {galleryImages.length > 1 && (
+            <div className={styles.thumbnailStrip}>
+              {galleryImages.map((image, index) => (
+                <button
+                  key={`${image}-${index}`}
+                  type="button"
+                  className={`${styles.thumbnail} ${index === selectedImageIndex ? styles.thumbnailActive : ""}`}
+                  onClick={() => setSelectedImageIndex(index)}
+                  aria-label={`Ver imagen ${index + 1}`}
+                >
+                  <img src={image} alt={`${car.title} ${index + 1}`} />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className={styles.detailContent}>

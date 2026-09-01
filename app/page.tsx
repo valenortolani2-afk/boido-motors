@@ -2,12 +2,28 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { FaWhatsapp } from "react-icons/fa";
-import { cars, whatsappBaseMessage, whatsappNumber } from "./cars";
+import { getCatalogCars, type Car, whatsappBaseMessage, whatsappNumber } from "./cars";
 import styles from "./page.module.css";
 
 export default function Home() {
   const router = useRouter();
+  const [catalog, setCatalog] = useState<Car[]>([]);
+
+  useEffect(() => {
+    const syncCatalog = () => setCatalog(getCatalogCars());
+
+    syncCatalog();
+    window.addEventListener("boido-catalog-updated", syncCatalog);
+    window.addEventListener("storage", syncCatalog);
+
+    return () => {
+      window.removeEventListener("boido-catalog-updated", syncCatalog);
+      window.removeEventListener("storage", syncCatalog);
+    };
+  }, []);
+
   return (
     <main className={styles.page}>
       <section className={styles.hero}>
@@ -63,7 +79,7 @@ export default function Home() {
         </div>
 
         <div className={styles.catalogGrid}>
-          {cars.map((car) => (
+          {catalog.map((car) => (
             <article
               key={car.id}
               className={styles.card}

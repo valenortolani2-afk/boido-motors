@@ -149,6 +149,7 @@ export function saveCatalogCars(cars: Car[]) {
 
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+    window.dispatchEvent(new Event("boido-catalog-updated"));
   } catch (error) {
     console.error("No se pudo guardar el catálogo en localStorage:", error);
   }
