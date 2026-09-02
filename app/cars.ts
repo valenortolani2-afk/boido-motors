@@ -101,14 +101,17 @@ const catalogSeed: Car[] = [
     title: "VOLKSWAGEN UP! 1.0 HIGH 5P",
     year: "2018",
     price: "$14.000.000",
-    image: "/imagenes%20de%20los%20autos/volkswagen%20up.jpeg",
-    images: ["/imagenes%20de%20los%20autos/volkswagen%20up.jpeg"],
+    image: "/imagenes%20de%20los%20autos/costado%20up.jpg",
+    images: [
+      "/imagenes%20de%20los%20autos/costado%20up.jpg",
+      "/imagenes%20de%20los%20autos/frente%20up.jpg",
+      "/imagenes%20de%20los%20autos/volante%20up.jpg"
+    ],
     badge: "SUV",
     km: "19.400 km",
     fuel: "Nafta",
     transmission: "Automática",
-    description:
-      "Diseño urbano, espacio interior y gran versatilidad para la familia o uso diario con estilo.",
+    description: "",
   },
   {
     id: 7,
