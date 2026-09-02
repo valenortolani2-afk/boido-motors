@@ -929,4 +929,64 @@
     flex-direction: column;
     align-items: flex-start;
   }
+
+  .adminPage {
+    padding: 20px 12px;
+  }
+
+  .adminHeader {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 20px 16px;
+  }
+
+  .adminHeader h1 {
+    font-size: 2rem;
+  }
+
+  .adminBackButton,
+  .primaryButtonAdmin,
+  .secondaryButtonAdmin,
+  .adminItemActions button {
+    width: 100%;
+  }
+
+  .adminStats,
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .adminStatCard,
+  .adminFormCard,
+  .adminListCard {
+    padding: 18px 14px;
+  }
+
+  .formActions {
+    flex-direction: column;
+  }
+
+  .adminItem {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .adminItemImageWrap {
+    width: 100%;
+    height: 180px;
+  }
+
+  .adminItemHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .adminItemActions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .photoGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
