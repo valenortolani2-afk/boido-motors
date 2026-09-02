@@ -73,7 +73,16 @@ export default function AdminCatalogPage() {
   const [draft, setDraft] = useState<DraftCar>(emptyCar);
 
   useEffect(() => {
-    setCatalog(getCatalogCars());
+    const syncCatalog = () => setCatalog(getCatalogCars());
+
+    syncCatalog();
+    window.addEventListener("boido-catalog-updated", syncCatalog);
+    window.addEventListener("storage", syncCatalog);
+
+    return () => {
+      window.removeEventListener("boido-catalog-updated", syncCatalog);
+      window.removeEventListener("storage", syncCatalog);
+    };
   }, []);
 
   const totalCars = useMemo(() => catalog.length, [catalog]);

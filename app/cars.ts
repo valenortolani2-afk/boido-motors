@@ -190,7 +190,7 @@ export function saveCatalogCars(cars: Car[]) {
   }
 
   const normalized = writeCatalogToStorage(cars);
-  window.dispatchEvent(new Event("boido-catalog-updated"));
+  window.dispatchEvent(new CustomEvent("boido-catalog-updated", { detail: normalized }));
   return normalized;
 }
 
