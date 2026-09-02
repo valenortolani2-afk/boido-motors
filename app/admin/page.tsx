@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { getCatalogCars, saveCatalogCars, type Car } from "../cars";
+import { generateCarId, getCatalogCars, saveCatalogCars, type Car } from "../cars";
 import styles from "../page.module.css";
 
 type DraftCar = Omit<Car, "id"> & {
@@ -59,13 +59,11 @@ const uploadDraftFiles = async (files: File[]) => {
 
     throw new Error("No se recibieron URLs de las imágenes");
   } catch (error) {
-    const isLocalEnvironment = typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
-
-    if (isLocalEnvironment) {
-      return Promise.all(files.map((file) => readFileAsDataUrl(file)));
+    try {
+      return await Promise.all(files.map((file) => readFileAsDataUrl(file)));
+    } catch {
+      throw error instanceof Error ? error : new Error("No se pudieron cargar algunas imágenes.");
     }
-
-    throw error;
   }
 };
 
@@ -152,7 +150,7 @@ export default function AdminCatalogPage() {
         car.id === editingId ? { ...car, ...normalizedDraft } : car
       );
     } else {
-      const newId = Date.now();
+      const newId = generateCarId(catalog);
       nextCatalog = [{ id: newId, ...normalizedDraft }, ...catalog];
     }
 

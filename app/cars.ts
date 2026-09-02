@@ -118,34 +118,62 @@ export const whatsappBaseMessage = encodeURIComponent("Hola, quiero consultar po
 
 export const STORAGE_KEY = "boido-cars-v1";
 
+export const dedupeCatalogCars = (cars: Car[]) => {
+  const seen = new Map<number, Car>();
+
+  for (const car of Array.isArray(cars) ? cars : []) {
+    const normalized = normalizeCar(car);
+    const id = Number(normalized.id);
+
+    if (!Number.isFinite(id)) {
+      continue;
+    }
+
+    seen.set(id, normalized);
+  }
+
+  return [...seen.values()].sort((a, b) => Number(b.id) - Number(a.id));
+};
+
+export const generateCarId = (cars: Car[] = []) => {
+  const ids = cars.map((car) => Number(car.id)).filter(Number.isFinite);
+  let nextId = Date.now();
+
+  while (ids.includes(nextId)) {
+    nextId += 1;
+  }
+
+  return nextId;
+};
+
 export function getCatalogCars(): Car[] {
   if (typeof window === "undefined") {
-    return catalogSeed.map(normalizeCar);
+    return dedupeCatalogCars(catalogSeed.map(normalizeCar));
   }
 
   const saved = window.localStorage.getItem(STORAGE_KEY);
 
   if (!saved) {
-    const initial = catalogSeed.map(normalizeCar);
+    const initial = dedupeCatalogCars(catalogSeed.map(normalizeCar));
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
     return initial;
   }
 
   try {
     const parsed = JSON.parse(saved) as Car[];
-    const normalized = Array.isArray(parsed) ? parsed.map(normalizeCar) : catalogSeed.map(normalizeCar);
-    return normalized.length > 0 ? normalized : catalogSeed.map(normalizeCar);
+    const normalized = Array.isArray(parsed) ? dedupeCatalogCars(parsed.map(normalizeCar)) : dedupeCatalogCars(catalogSeed.map(normalizeCar));
+    return normalized.length > 0 ? normalized : dedupeCatalogCars(catalogSeed.map(normalizeCar));
   } catch {
-    return catalogSeed.map(normalizeCar);
+    return dedupeCatalogCars(catalogSeed.map(normalizeCar));
   }
 }
 
 export function saveCatalogCars(cars: Car[]) {
   if (typeof window === "undefined") {
-    return cars;
+    return dedupeCatalogCars(cars.map(normalizeCar));
   }
 
-  const normalized = cars.map(normalizeCar);
+  const normalized = dedupeCatalogCars(cars.map(normalizeCar));
 
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
