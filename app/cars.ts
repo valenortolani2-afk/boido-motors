@@ -118,6 +118,14 @@ export const whatsappBaseMessage = encodeURIComponent("Hola, quiero consultar po
 
 export const STORAGE_KEY = "boido-cars-v1";
 
+const defaultCatalog = () => dedupeCatalogCars(catalogSeed.map(normalizeCar));
+
+const writeCatalogToStorage = (cars: Car[]) => {
+  const normalized = dedupeCatalogCars(cars.map(normalizeCar));
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+  return normalized;
+};
+
 export const dedupeCatalogCars = (cars: Car[]) => {
   const seen = new Map<number, Car>();
 
@@ -148,23 +156,31 @@ export const generateCarId = (cars: Car[] = []) => {
 
 export function getCatalogCars(): Car[] {
   if (typeof window === "undefined") {
-    return dedupeCatalogCars(catalogSeed.map(normalizeCar));
+    return defaultCatalog();
   }
 
   const saved = window.localStorage.getItem(STORAGE_KEY);
 
   if (!saved) {
-    const initial = dedupeCatalogCars(catalogSeed.map(normalizeCar));
+    const initial = defaultCatalog();
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
     return initial;
   }
 
   try {
     const parsed = JSON.parse(saved) as Car[];
-    const normalized = Array.isArray(parsed) ? dedupeCatalogCars(parsed.map(normalizeCar)) : dedupeCatalogCars(catalogSeed.map(normalizeCar));
-    return normalized.length > 0 ? normalized : dedupeCatalogCars(catalogSeed.map(normalizeCar));
+    const normalized = Array.isArray(parsed) ? dedupeCatalogCars(parsed.map(normalizeCar)) : defaultCatalog();
+    const repaired = normalized.length > 0 ? normalized : defaultCatalog();
+
+    if (JSON.stringify(repaired) !== saved) {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(repaired));
+    }
+
+    return repaired;
   } catch {
-    return dedupeCatalogCars(catalogSeed.map(normalizeCar));
+    const fallback = defaultCatalog();
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(fallback));
+    return fallback;
   }
 }
 
@@ -173,15 +189,8 @@ export function saveCatalogCars(cars: Car[]) {
     return dedupeCatalogCars(cars.map(normalizeCar));
   }
 
-  const normalized = dedupeCatalogCars(cars.map(normalizeCar));
-
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
-    window.dispatchEvent(new Event("boido-catalog-updated"));
-  } catch (error) {
-    console.error("No se pudo guardar el catálogo en localStorage:", error);
-  }
-
+  const normalized = writeCatalogToStorage(cars);
+  window.dispatchEvent(new Event("boido-catalog-updated"));
   return normalized;
 }
 
