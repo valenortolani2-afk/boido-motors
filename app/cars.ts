@@ -108,6 +108,24 @@ const catalogSeed: Car[] = [
     description:
       "Diseño urbano, espacio interior y gran versatilidad para la familia o uso diario con estilo.",
   },
+  {
+    id: 7,
+    title: "FORD EXPLORER 4.0L V6",
+    year: "1996",
+    price: "$8.000.000",
+    image: "/imagenes%20de%20los%20autos/frente%20de%20explorer.jpeg",
+    images: [
+      "/imagenes%20de%20los%20autos/frente%20de%20explorer.jpeg",
+      "/imagenes%20de%20los%20autos/costado%20izquierda%20explorer.jpeg",
+      "/imagenes%20de%20los%20autos/baul%20explorer.jpeg",
+    ],
+    badge: "Performance",
+    km: "250.000 km",
+    fuel: "Nafta",
+    transmission: "Automática",
+    description:
+      "Ford Explorer clásico V6 4.0L en buen estado general. Ideal para trabajos y viajes.",
+  },
 ];
 
 export const localImage = (filename: string) =>
