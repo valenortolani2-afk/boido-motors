@@ -12,6 +12,8 @@ export type Car = {
   description: string;
 };
 
+import { generatedCatalog } from "./generated-catalog";
+
 const normalizeCar = (car: Car): Car => {
   const images = Array.isArray(car.images) ? car.images.filter(Boolean) : [];
   const primaryImage = car.image?.trim() || images[0] || "";
@@ -26,13 +28,13 @@ const normalizeCar = (car: Car): Car => {
 const catalogSeed: Car[] = [
   {
     id: 1,
-    title: "BMW Serie 3",
-    year: "2022",
-    price: "$42.500",
-    image: "/imagenes%20de%20los%20autos/baul%20explorer.jpeg",
-    images: ["/imagenes%20de%20los%20autos/baul%20explorer.jpeg"],
+    title: "peugeot 207 compact",
+    year: "2011",
+    price: "$8.500.000",
+    image: "/imagenes%20de%20los%20autos/peugeot%20207%20compact.jpeg",
+    images: ["/imagenes%20de%20los%20autos/peugeot%20207%20compact.jpeg"],
     badge: "Nuevo",
-    km: "18.000 km",
+    km: "90.000 km",
     fuel: "Nafta",
     transmission: "Automática",
     description:
@@ -126,6 +128,7 @@ const catalogSeed: Car[] = [
     description:
       "Ford Explorer clásico V6 4.0L en buen estado general. Ideal para trabajos y viajes.",
   },
+  ...generatedCatalog,
 ];
 
 export const localImage = (filename: string) =>
