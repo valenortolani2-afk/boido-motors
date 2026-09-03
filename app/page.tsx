@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaWhatsapp } from "react-icons/fa";
-import { getCatalogCars, type Car, whatsappBaseMessage, whatsappNumber } from "./cars";
+import { getCarPrimaryImage, getCatalogCars, type Car, whatsappBaseMessage, whatsappNumber } from "./cars";
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -94,7 +94,14 @@ export default function Home() {
               }}
             >
               <div className={styles.cardImageWrap}>
-                <img src={car.image} alt={car.title} className={styles.cardImage} />
+                <img
+                  src={getCarPrimaryImage(car)}
+                  alt={car.title}
+                  className={styles.cardImage}
+                  onError={(event) => {
+                    event.currentTarget.src = "/imagenes%20de%20los%20autos/frente%20siena.jpg";
+                  }}
+                />
                 <span className={styles.badge}>{car.badge}</span>
               </div>
               <div className={styles.cardBody}>

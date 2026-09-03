@@ -2,7 +2,13 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { generateCarId, getCatalogCars, saveCatalogCars, type Car } from "../cars";
+import {
+  fallbackCarImage,
+  generateCarId,
+  getCatalogCars,
+  saveCatalogCars,
+  type Car,
+} from "../cars";
 import styles from "../page.module.css";
 
 type DraftCar = Omit<Car, "id"> & {
@@ -104,10 +110,12 @@ export default function AdminCatalogPage() {
 
       setDraft((current) => {
         const mergedImages = [...(Array.isArray(current.images) ? current.images : []), ...uploadedUrls].filter(Boolean);
+        const safeImages = [...new Set(mergedImages.map((item) => item.trim()).filter(Boolean))];
+
         return {
           ...current,
-          images: mergedImages,
-          image: current.image || mergedImages[0] || "",
+          images: safeImages,
+          image: current.image || safeImages[0] || fallbackCarImage,
         };
       });
     } catch (error) {
@@ -124,11 +132,12 @@ export default function AdminCatalogPage() {
   const handleRemoveImage = (indexToRemove: number) => {
     setDraft((current) => {
       const updatedImages = current.images.filter((_, index) => index !== indexToRemove);
+      const safeImages = [...new Set(updatedImages.map((item) => item.trim()).filter(Boolean))];
 
       return {
         ...current,
-        images: updatedImages,
-        image: updatedImages[0] || "",
+        images: safeImages,
+        image: safeImages[0] || fallbackCarImage,
       };
     });
   };
@@ -138,13 +147,13 @@ export default function AdminCatalogPage() {
 
     if (!draft.title.trim()) return;
 
-    const cleanedImages = [...new Set(draftImages.filter(Boolean))];
+    const cleanedImages = [...new Set(draftImages.map((item) => item.trim()).filter(Boolean))];
     const normalizedDraft: Omit<Car, "id"> = {
       title: draft.title.trim(),
       year: draft.year.trim(),
       price: draft.price.trim(),
-      image: cleanedImages[0] || draft.image.trim(),
-      images: cleanedImages,
+      image: cleanedImages[0] || draft.image.trim() || fallbackCarImage,
+      images: cleanedImages.length > 0 ? cleanedImages : [fallbackCarImage],
       badge: draft.badge.trim(),
       km: draft.km.trim(),
       fuel: draft.fuel.trim(),
@@ -175,8 +184,8 @@ export default function AdminCatalogPage() {
       title: car.title,
       year: car.year,
       price: car.price,
-      image: car.image || "",
-      images: Array.isArray(car.images) && car.images.length > 0 ? car.images : car.image ? [car.image] : [],
+      image: car.image || fallbackCarImage,
+      images: Array.isArray(car.images) && car.images.length > 0 ? car.images : car.image ? [car.image] : [fallbackCarImage],
       badge: car.badge,
       km: car.km,
       fuel: car.fuel,

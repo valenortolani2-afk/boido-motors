@@ -14,14 +14,23 @@ export type Car = {
 
 import { generatedCatalog } from "./generated-catalog";
 
-const normalizeCar = (car: Car): Car => {
-  const images = Array.isArray(car.images) ? car.images.filter(Boolean) : [];
-  const primaryImage = car.image?.trim() || images[0] || "";
+const normalizeCar = (car: Partial<Car> | null | undefined): Car => {
+  const safeCar = car ?? {};
+  const images = Array.isArray(safeCar.images) ? safeCar.images.filter(Boolean) : [];
+  const primaryImage = typeof safeCar.image === "string" ? safeCar.image.trim() : "";
 
   return {
-    ...car,
-    image: primaryImage,
-    images: images.length > 0 ? images : primaryImage ? [primaryImage] : [],
+    id: Number(safeCar.id ?? 0),
+    title: safeCar.title ?? "",
+    year: safeCar.year ?? "",
+    price: safeCar.price ?? "",
+    image: primaryImage || images[0] || "",
+    images: images.length > 0 ? images : primaryImage || images[0] ? [primaryImage || images[0]] : [],
+    badge: safeCar.badge ?? "",
+    km: safeCar.km ?? "",
+    fuel: safeCar.fuel ?? "",
+    transmission: safeCar.transmission ?? "",
+    description: safeCar.description ?? "",
   };
 };
 
@@ -30,13 +39,13 @@ const catalogSeed: Car[] = [
     id: 1,
     title: "peugeot 207 compact",
     year: "2011",
-    price: "$8.500.000",
+    price: "$0",
     image: "/imagenes%20de%20los%20autos/peugeot%20207%20compact.jpeg",
     images: ["/imagenes%20de%20los%20autos/peugeot%20207%20compact.jpeg"],
     badge: "Nuevo",
     km: "90.000 km",
     fuel: "Nafta",
-    transmission: "Automática",
+    transmission: "manual",
     description:
       "Sedán premium con acabados de lujo, motor eficiente y un diseño sobrio ideal para uso diario y viajes largos.",
   },
@@ -44,13 +53,13 @@ const catalogSeed: Car[] = [
     id: 2,
     title: "Chevrolet Astra CON GNC",
     year: "2008",
-    price: "$5.550.000",
+    price: "$0",
     image: "/imagenes%20de%20los%20autos/chevriket%20astra.jpeg",
     images: ["/imagenes%20de%20los%20autos/chevriket%20astra.jpeg"],
     badge: "Destacado",
-    km: "22.500 km",
+    km: "1 km",
     fuel: "Nafta",
-    transmission: "Automática",
+    transmission: "manual",
     description:
       "Confort excepcional, tecnología avanzada y una presencia elegante que se destaca en cualquier entorno.",
   },
@@ -64,17 +73,23 @@ const catalogSeed: Car[] = [
     badge: "Oferta",
     km: "30.000 km",
     fuel: "Diésel",
-    transmission: "Automática",
+    transmission: "manual",
     description:
       "Un vehículo equilibrado, cómodo y sofisticado con excelente equipamiento y un comportamiento muy refinado.",
   },
   {
     id: 4,
-    title: "FIAT PALIO 2013 FULL",
+    title: "FIAT SIENA 2013 FULL",
     year: "2013",
     price: "$10.000.000",
-    image: "/imagenes%20de%20los%20autos/fiat%20palio%202013%20full.jpeg",
-    images: ["/imagenes%20de%20los%20autos/fiat%20palio%202013%20full.jpeg"],
+    image: "/imagenes%20de%20los%20autos/frente%20siena.jpg"
+",
+    images: [
+      "/imagenes%20de%20los%20autos/frente%20siena.jpg",
+      "/imagenes%20de%20los%20autos/lateral%20derecho%20siena.jpg",
+      "/imagenes%20de%20los%20autos/lateral%20izquierdo%20siena.jpg",
+      "/imagenes%20de%20los%20autos/baul%20siena.jpeg",
+    ],
     badge: "Popular",
     km: "12.800 km",
     fuel: "Nafta",
@@ -82,20 +97,7 @@ const catalogSeed: Car[] = [
     description:
       "Fiable, económico y muy bien equipado. Ideal para quien busca un auto seguro y práctico para todos los días.",
   },
-  {
-    id: 5,
-    title: "FORD EXPLORER V6 4,0L 4X2 LIMITED",
-    year: "1996",
-    price: "$8.000.000",
-    image: "/imagenes%20de%20los%20autos/frente%20de%20explorer.jpeg",
-    images: ["/imagenes%20de%20los%20autos/frente%20de%20explorer.jpeg"],
-    badge: "Performance",
-    km: "25.000 km",
-    fuel: "Nafta",
-    transmission: "Automática",
-    description:
-      "Potencia, estilo y dinamismo para quienes buscan una experiencia más deportiva sin perder confort.",
-  },
+ 
   {
     id: 6,
     title: "VOLKSWAGEN UP! 1.0 HIGH 5P",
@@ -107,11 +109,12 @@ const catalogSeed: Car[] = [
       "/imagenes%20de%20los%20autos/frente%20up.jpg",
       "/imagenes%20de%20los%20autos/volante%20up.jpg"
     ],
-    badge: "SUV",
+    badge: "COMPACTO",
     km: "19.400 km",
     fuel: "Nafta",
-    transmission: "Automática",
-    description: "",
+    transmission: "MANUAL",
+    description:
+      "Diseño urbano, espacio interior y gran versatilidad para la familia o uso diario con estilo.",
   },
   {
     id: 7,
@@ -134,19 +137,58 @@ const catalogSeed: Car[] = [
   ...generatedCatalog,
 ];
 
+export const fallbackCarImage = "/imagenes%20de%20los%20autos/frente%20siena.jpg";
+
+export const normalizeCarImages = (value?: string | string[]) => {
+  const arr = Array.isArray(value) ? value.filter(Boolean) : value ? [value] : [];
+  return [...new Set(arr.map((item) => String(item).trim()).filter(Boolean))];
+};
+
+export const getCarPrimaryImage = (car?: Partial<Car> | null) => {
+  if (!car) return fallbackCarImage;
+
+  const images = normalizeCarImages(car.images);
+  const primary = typeof car.image === "string" ? car.image.trim() : "";
+
+  return primary || images[0] || fallbackCarImage;
+};
+
 export const localImage = (filename: string) =>
   `/imagenes%20de%20los%20autos/${encodeURIComponent(filename)}`;
 
 export const whatsappNumber = "542234060546";
 export const whatsappBaseMessage = encodeURIComponent("Hola, quiero consultar por un auto.");
 
-export const STORAGE_KEY = "boido-cars-v1";
+export const STORAGE_KEY = "boido-cars-v2";
+const LEGACY_STORAGE_KEYS = ["boido-cars-v1"];
 
 const defaultCatalog = () => dedupeCatalogCars(catalogSeed.map(normalizeCar));
 
+const clearLegacyCatalogStorage = () => {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  for (const key of LEGACY_STORAGE_KEYS) {
+    try {
+      if (key !== STORAGE_KEY) {
+        window.localStorage.removeItem(key);
+      }
+    } catch {
+      // Ignore storage access issues.
+    }
+  }
+};
+
 const writeCatalogToStorage = (cars: Car[]) => {
   const normalized = dedupeCatalogCars(cars.map(normalizeCar));
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+  } catch {
+    // Ignored: large data URLs and restricted storage can fail in the browser.
+  }
+
   return normalized;
 };
 
@@ -183,28 +225,46 @@ export function getCatalogCars(): Car[] {
     return defaultCatalog();
   }
 
-  const saved = window.localStorage.getItem(STORAGE_KEY);
-
-  if (!saved) {
-    const initial = defaultCatalog();
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
-    return initial;
-  }
-
   try {
-    const parsed = JSON.parse(saved) as Car[];
-    const normalized = Array.isArray(parsed) ? dedupeCatalogCars(parsed.map(normalizeCar)) : defaultCatalog();
-    const repaired = normalized.length > 0 ? normalized : defaultCatalog();
+    clearLegacyCatalogStorage();
 
-    if (JSON.stringify(repaired) !== saved) {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(repaired));
+    const saved = window.localStorage.getItem(STORAGE_KEY);
+
+    if (!saved) {
+      const initial = defaultCatalog();
+      try {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
+      } catch {
+        // Ignore storage quota issues; keep using the in-memory catalog.
+      }
+      return initial;
     }
 
-    return repaired;
+    try {
+      const parsed = JSON.parse(saved) as Car[];
+      const normalized = Array.isArray(parsed) ? dedupeCatalogCars(parsed.map(normalizeCar)) : defaultCatalog();
+      const repaired = normalized.length > 0 ? normalized : defaultCatalog();
+
+      if (JSON.stringify(repaired) !== saved) {
+        try {
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(repaired));
+        } catch {
+          // Ignore storage quota issues; keep using the in-memory catalog.
+        }
+      }
+
+      return repaired;
+    } catch {
+      const fallback = defaultCatalog();
+      try {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(fallback));
+      } catch {
+        // Ignore storage quota issues; keep using the in-memory catalog.
+      }
+      return fallback;
+    }
   } catch {
-    const fallback = defaultCatalog();
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(fallback));
-    return fallback;
+    return defaultCatalog();
   }
 }
 
@@ -214,7 +274,13 @@ export function saveCatalogCars(cars: Car[]) {
   }
 
   const normalized = writeCatalogToStorage(cars);
-  window.dispatchEvent(new CustomEvent("boido-catalog-updated", { detail: normalized }));
+
+  try {
+    window.dispatchEvent(new CustomEvent("boido-catalog-updated", { detail: normalized }));
+  } catch {
+    // Ignore unsupported event environments.
+  }
+
   return normalized;
 }
 

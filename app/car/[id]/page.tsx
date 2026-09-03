@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaWhatsapp } from "react-icons/fa";
-import { getCatalogCars, type Car, whatsappNumber } from "../../cars";
+import { getCarPrimaryImage, getCatalogCars, type Car, whatsappNumber } from "../../cars";
 import styles from "../../page.module.css";
 
 export default function CarDetailPage() {
@@ -33,8 +33,8 @@ export default function CarDetailPage() {
     );
   }
 
-  const galleryImages = Array.isArray(car.images) && car.images.length > 0 ? car.images : [car.image];
-  const currentImage = galleryImages[selectedImageIndex] ?? galleryImages[0];
+  const galleryImages = Array.isArray(car.images) && car.images.length > 0 ? car.images : [getCarPrimaryImage(car)];
+  const currentImage = galleryImages[selectedImageIndex] ?? galleryImages[0] ?? "/imagenes%20de%20los%20autos/frente%20siena.jpg";
 
   const goToPreviousImage = () => {
     setSelectedImageIndex((current) => (current === 0 ? galleryImages.length - 1 : current - 1));
@@ -64,7 +64,14 @@ export default function CarDetailPage() {
               ←
             </button>
 
-            <img src={currentImage} alt={car.title} className={styles.detailImage} />
+            <img
+              src={currentImage}
+              alt={car.title}
+              className={styles.detailImage}
+              onError={(event) => {
+                event.currentTarget.src = "/imagenes%20de%20los%20autos/frente%20siena.jpg";
+              }}
+            />
 
             <button
               type="button"
