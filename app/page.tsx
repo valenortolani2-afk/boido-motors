@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaWhatsapp } from "react-icons/fa";
-import { getCarPrimaryImage, getCatalogCars, type Car, whatsappBaseMessage, whatsappNumber } from "./cars";
+import { getCarPrimaryImage, type Car, whatsappBaseMessage, whatsappNumber } from "./cars";
+import { loadCatalogCars } from "../lib/catalog-client";
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -13,13 +14,20 @@ export default function Home() {
   const [catalog, setCatalog] = useState<Car[]>([]);
 
   useEffect(() => {
-    const syncCatalog = () => setCatalog(getCatalogCars());
+    let cancelled = false;
+
+    const syncCatalog = () => {
+      void loadCatalogCars().then((cars) => {
+        if (!cancelled) setCatalog(cars);
+      });
+    };
 
     syncCatalog();
     window.addEventListener("boido-catalog-updated", syncCatalog);
     window.addEventListener("storage", syncCatalog);
 
     return () => {
+      cancelled = true;
       window.removeEventListener("boido-catalog-updated", syncCatalog);
       window.removeEventListener("storage", syncCatalog);
     };
@@ -96,7 +104,7 @@ export default function Home() {
             >
               <div className={styles.cardImageWrap}>
                 <Image
-                  src={getCarPrimaryImage(car) || "/imagenes%20de%20los%20autos/frente%20siena.jpg"}
+                  src={getCarPrimaryImage(car)}
                   alt={car.title}
                   className={styles.cardImage}
                   fill

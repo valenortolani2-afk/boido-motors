@@ -40,11 +40,11 @@ const catalogSeed: Car[] = [
     title: "peugeot 207 compact",
     year: "2011",
     price: "$0",
-    image: "/imagenes%20de%20los%20autos/frente%20207.jpeg",
+    image: "/frente%20207.jpeg",
     images: [
-      "/imagenes%20de%20los%20autos/frente%20207.jpeg",
-      "/imagenes%20de%20los%20autos/costado%20207.jpeg",
-      "/imagenes%20de%20los%20autos/baul%20207.jpeg",
+      "/frente%20207.jpeg",
+      "/costado%20207.jpeg",
+      "/baul%20207.jpeg",
     ],
     badge: "Nuevo",
     km: "90.000 km",
@@ -58,8 +58,8 @@ const catalogSeed: Car[] = [
     title: "Chevrolet Astra CON GNC",
     year: "2008",
     price: "$0",
-    image: "/imagenes%20de%20los%20autos/chevriket%20astra.jpeg",
-    images: ["/imagenes%20de%20los%20autos/chevriket%20astra.jpeg"],
+    image: "/file.svg",
+    images: ["/file.svg"],
     badge: "Destacado",
     km: "1 km",
     fuel: "Nafta",
@@ -72,11 +72,11 @@ const catalogSeed: Car[] = [
     title: "VOLKSWAGEN AMAROK 2.0 TDI 4X4",
     year: "2011",
     price: "$0",
-    image: "/imagenes%20de%20los%20autos/frente%20amarok.jpeg",
+    image: "/frente%20amarok.jpeg",
     images: [
-      "/imagenes%20de%20los%20autos/frente%20amarok.jpeg",
-      "/imagenes%20de%20los%20autos/baul%20amarok.jpeg",
-      "/imagenes%20de%20los%20autos/volante%20amarok.jpeg",
+      "/frente%20amarok.jpeg",
+      "/baul%20amarok.jpeg",
+      "/volante%20amarok.jpeg",
     ],
     badge: "Oferta",
     km: "180.000 km",
@@ -90,12 +90,12 @@ const catalogSeed: Car[] = [
     title: "FIAT SIENA 2013 FULL",
     year: "2013",
     price: "$10.000.000",
-    image: "/imagenes%20de%20los%20autos/frente%20siena.jpg",
+    image: "/siena%20frente.jpeg",
     images: [
-      "/imagenes%20de%20los%20autos/frente%20siena.jpg",
-      "/imagenes%20de%20los%20autos/lateral%20derecho%20siena.jpg",
-      "/imagenes%20de%20los%20autos/lateral%20izquierdo%20siena.jpg",
-      "/imagenes%20de%20los%20autos/baul%20siena.jpeg",
+      "/siena%20frente.jpeg",
+      "/siena%20frente%20izquierda.jpeg",
+      "/siena%20izquierda.jpeg",
+      "/baul%20siena.jpeg",
     ],
     badge: "Popular",
     km: "12.800 km",
@@ -109,11 +109,11 @@ const catalogSeed: Car[] = [
     title: "VOLKSWAGEN UP! 1.0 HIGH 5P",
     year: "2018",
     price: "$0",
-    image: "/imagenes%20de%20los%20autos/frente%20up.jpeg",
+    image: "/frente%20up.jpeg",
     images: [
-      "/imagenes%20de%20los%20autos/frente%20up.jpeg",
-      "/imagenes%20de%20los%20autos/costado%20up.jpeg",
-      "/imagenes%20de%20los%20autos/volante%20up.jpeg",
+      "/frente%20up.jpeg",
+      "/costado%20up.jpeg",
+      "/volante%20up.jpeg",
     ],
     badge: "COMPACTO",
     km: "19.400 km",
@@ -127,11 +127,12 @@ const catalogSeed: Car[] = [
     title: "FORD EXPLORER 4.0L V6",
     year: "1996",
     price: "$8.000.000",
-    image: "/imagenes%20de%20los%20autos/frente%20ford%20explorer.jpeg",
+    image: "/frente%20ford%20explorer.jpeg",
     images: [
-      "/imagenes%20de%20los%20autos/frente%20ford%20explorer.jpeg",
-      "/imagenes%20de%20los%20autos/lateral%20derecho%20ford%20explorer.jpeg",
-      "/imagenes%20de%20los%20autos/baul%20ford%20explorer.jpeg",
+      "/frente%20ford%20explorer.jpeg",
+      "/lateral%20derecho%20ford%20explorer.jpeg",
+      "/lateral%20izquierdo%20ford%20explorer.jpeg",
+      "/baul%20ford%20explorer.jpeg",
     ],
     badge: "Performance",
     km: "250.000 km",
@@ -143,7 +144,7 @@ const catalogSeed: Car[] = [
   ...generatedCatalog,
 ];
 
-export const fallbackCarImage = "/imagenes%20de%20los%20autos/frente%20siena.jpg";
+export const fallbackCarImage = "/file.svg";
 
 export const normalizeCarImages = (value?: string | string[]) => {
   const arr = Array.isArray(value) ? value.filter(Boolean) : value ? [value] : [];
@@ -184,7 +185,7 @@ const hasAllBaseCatalogIds = (cars: Car[]) => {
   return catalogSeed.every((car) => savedIds.has(Number(car.id)));
 };
 
-const sanitizeCatalogCars = (cars: Car[]) => {
+export const sanitizeCatalogCars = (cars: Car[]) => {
   const seen = new Map<number, Car>();
 
   for (const rawCar of Array.isArray(cars) ? cars : []) {
@@ -217,7 +218,7 @@ const sanitizeCatalogCars = (cars: Car[]) => {
   return [...seen.values()].sort((a, b) => Number(b.id) - Number(a.id));
 };
 
-const defaultCatalog = () => sanitizeCatalogCars(catalogSeed.map(normalizeCar));
+export const defaultCatalog = () => sanitizeCatalogCars(catalogSeed.map(normalizeCar));
 
 const clearLegacyCatalogStorage = () => {
   if (typeof window === "undefined") {

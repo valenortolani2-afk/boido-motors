@@ -7,10 +7,8 @@ export const generatedCatalog = [
     "title": "Chevrolet Astra",
     "year": "",
     "price": "",
-    "image": "/imagenes%20de%20los%20autos/chevrolet%20astra/chevriket%20astra.jpeg",
-    "images": [
-      "/imagenes%20de%20los%20autos/chevrolet%20astra/chevriket%20astra.jpeg"
-    ],
+    "image": "/file.svg",
+    "images": ["/file.svg"],
     "badge": "",
     "km": "",
     "fuel": "",
@@ -22,10 +20,8 @@ export const generatedCatalog = [
     "title": "Fiat Siena",
     "year": "",
     "price": "",
-    "image": "/imagenes%20de%20los%20autos/fiat%20siena/fiat%20palio%202013%20full.jpeg",
-    "images": [
-      "/imagenes%20de%20los%20autos/fiat%20siena/fiat%20palio%202013%20full.jpeg"
-    ],
+    "image": "/siena%20frente.jpeg",
+    "images": ["/siena%20frente.jpeg"],
     "badge": "",
     "km": "",
     "fuel": "",
@@ -37,13 +33,12 @@ export const generatedCatalog = [
     "title": "Ford Explorer",
     "year": "",
     "price": "",
-    "image": "/imagenes%20de%20los%20autos/ford%20explorer/baul%20explorer.jpeg",
+    "image": "/frente%20ford%20explorer.jpeg",
     "images": [
-      "/imagenes%20de%20los%20autos/ford%20explorer/baul%20explorer.jpeg",
-      "/imagenes%20de%20los%20autos/ford%20explorer/costado%20izquierda%20explorer.jpeg",
-      "/imagenes%20de%20los%20autos/ford%20explorer/costado%20izquierdaexplorer.jpeg",
-      "/imagenes%20de%20los%20autos/ford%20explorer/Costado%20traserio%20explorer.jpeg",
-      "/imagenes%20de%20los%20autos/ford%20explorer/frente%20de%20explorer.jpeg"
+      "/frente%20ford%20explorer.jpeg",
+      "/lateral%20derecho%20ford%20explorer.jpeg",
+      "/lateral%20izquierdo%20ford%20explorer.jpeg",
+      "/baul%20ford%20explorer.jpeg"
     ],
     "badge": "",
     "km": "",
@@ -56,10 +51,8 @@ export const generatedCatalog = [
     "title": "Partener Pagatonica",
     "year": "",
     "price": "",
-    "image": "/imagenes%20de%20los%20autos/partener%20pagatonica/partner%20patagonica.jpeg",
-    "images": [
-      "/imagenes%20de%20los%20autos/partener%20pagatonica/partner%20patagonica.jpeg"
-    ],
+    "image": "/file.svg",
+    "images": ["/file.svg"],
     "badge": "",
     "km": "",
     "fuel": "",
@@ -71,10 +64,8 @@ export const generatedCatalog = [
     "title": "Volkswagen Up",
     "year": "",
     "price": "",
-    "image": "/imagenes%20de%20los%20autos/volkswagen%20up/volkswagen%20up.jpeg",
-    "images": [
-      "/imagenes%20de%20los%20autos/volkswagen%20up/volkswagen%20up.jpeg"
-    ],
+    "image": "/frente%20up.jpeg",
+    "images": ["/frente%20up.jpeg"],
     "badge": "",
     "km": "",
     "fuel": "",

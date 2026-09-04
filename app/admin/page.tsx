@@ -6,10 +6,9 @@ import Link from "next/link";
 import {
   fallbackCarImage,
   generateCarId,
-  getCatalogCars,
-  saveCatalogCars,
   type Car,
 } from "../cars";
+import { loadCatalogCars, persistCatalogCars } from "../../lib/catalog-client";
 import styles from "../page.module.css";
 
 type DraftCar = Omit<Car, "id"> & {
@@ -29,49 +28,32 @@ const emptyCar: DraftCar = {
   description: "",
 };
 
-const readFileAsDataUrl = (file: File) =>
-  new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
+const uploadDraftFiles = async (files: File[]) => {
+  const formData = new FormData();
+  files.forEach((file) => formData.append("file", file));
 
-    reader.onload = () => resolve(String(reader.result ?? ""));
-    reader.onerror = () => reject(new Error("No se pudo leer la imagen seleccionada."));
-    reader.readAsDataURL(file);
+  const response = await fetch("/api/upload", {
+    method: "POST",
+    body: formData,
   });
 
-const uploadDraftFiles = async (files: File[]) => {
+  let payload: { urls?: string[]; error?: string } = {};
   try {
-    const formData = new FormData();
-    files.forEach((file) => formData.append("file", file));
-
-    const response = await fetch("/api/upload", {
-      method: "POST",
-      body: formData,
-    });
-
-    let payload: { urls?: string[]; error?: string } = {};
-    try {
-      payload = (await response.json()) as { urls?: string[]; error?: string };
-    } catch {
-      payload = {};
-    }
-
-    if (!response.ok) {
-      throw new Error(payload.error || "Fallo al subir las imágenes");
-    }
-
-    const uploadedUrls = Array.isArray(payload.urls) ? payload.urls.filter(Boolean) : [];
-    if (uploadedUrls.length > 0) {
-      return uploadedUrls;
-    }
-
-    throw new Error("No se recibieron URLs de las imágenes");
-  } catch (error) {
-    try {
-      return await Promise.all(files.map((file) => readFileAsDataUrl(file)));
-    } catch {
-      throw error instanceof Error ? error : new Error("No se pudieron cargar algunas imágenes.");
-    }
+    payload = (await response.json()) as { urls?: string[]; error?: string };
+  } catch {
+    payload = {};
   }
+
+  if (!response.ok) {
+    throw new Error(payload.error || "Fallo al subir las imágenes");
+  }
+
+  const uploadedUrls = Array.isArray(payload.urls) ? payload.urls.filter(Boolean) : [];
+  if (uploadedUrls.length > 0) {
+    return uploadedUrls;
+  }
+
+  throw new Error("No se recibieron URLs de las imágenes");
 };
 
 export default function AdminCatalogPage() {
@@ -79,14 +61,23 @@ export default function AdminCatalogPage() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [draft, setDraft] = useState<DraftCar>(emptyCar);
 
+  const [saving, setSaving] = useState(false);
+
   useEffect(() => {
-    const syncCatalog = () => setCatalog(getCatalogCars());
+    let cancelled = false;
+
+    const syncCatalog = () => {
+      void loadCatalogCars().then((cars) => {
+        if (!cancelled) setCatalog(cars);
+      });
+    };
 
     syncCatalog();
     window.addEventListener("boido-catalog-updated", syncCatalog);
     window.addEventListener("storage", syncCatalog);
 
     return () => {
+      cancelled = true;
       window.removeEventListener("boido-catalog-updated", syncCatalog);
       window.removeEventListener("storage", syncCatalog);
     };
@@ -143,7 +134,7 @@ export default function AdminCatalogPage() {
     });
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!draft.title.trim()) return;
@@ -173,10 +164,17 @@ export default function AdminCatalogPage() {
       nextCatalog = [{ id: newId, ...normalizedDraft }, ...catalog];
     }
 
-    const savedCatalog = saveCatalogCars(nextCatalog);
-    setCatalog(savedCatalog);
-    setDraft(emptyCar);
-    setEditingId(null);
+    setSaving(true);
+    try {
+      const savedCatalog = await persistCatalogCars(nextCatalog);
+      setCatalog(savedCatalog);
+      setDraft(emptyCar);
+      setEditingId(null);
+    } catch (error) {
+      window.alert(error instanceof Error ? error.message : "No se pudo guardar el catálogo.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleEdit = (car: Car) => {
@@ -195,14 +193,21 @@ export default function AdminCatalogPage() {
     });
   };
 
-  const handleDelete = (carId: number) => {
+  const handleDelete = async (carId: number) => {
     const nextCatalog = catalog.filter((car) => car.id !== carId);
-    const savedCatalog = saveCatalogCars(nextCatalog);
-    setCatalog(savedCatalog);
+    setSaving(true);
+    try {
+      const savedCatalog = await persistCatalogCars(nextCatalog);
+      setCatalog(savedCatalog);
 
-    if (editingId === carId) {
-      setEditingId(null);
-      setDraft(emptyCar);
+      if (editingId === carId) {
+        setEditingId(null);
+        setDraft(emptyCar);
+      }
+    } catch (error) {
+      window.alert(error instanceof Error ? error.message : "No se pudo eliminar la publicación.");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -333,8 +338,8 @@ export default function AdminCatalogPage() {
             </label>
 
             <div className={styles.formActions}>
-              <button type="submit" className={styles.primaryButtonAdmin}>
-                {editingId !== null ? "Guardar cambios" : "Crear publicación"}
+              <button type="submit" className={styles.primaryButtonAdmin} disabled={saving}>
+                {saving ? "Guardando…" : editingId !== null ? "Guardar cambios" : "Crear publicación"}
               </button>
               <button type="button" className={styles.secondaryButtonAdmin} onClick={resetForm}>
                 Limpiar
@@ -354,7 +359,7 @@ export default function AdminCatalogPage() {
                 <article key={car.id} className={styles.adminItem}>
                   <div className={styles.adminItemImageWrap}>
                     <Image
-                      src={car.images?.[0] || car.image || "/imagenes%20de%20los%20autos/volkswagen%20up.jpeg"}
+                      src={car.images?.[0] || car.image || fallbackCarImage}
                       alt={car.title}
                       fill
                       sizes="(max-width: 640px) 100vw, 130px"

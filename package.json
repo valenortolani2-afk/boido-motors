@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3456",
     "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
+    "start": "next start -p 3456",
+    "lint": "eslint",
+    "migrate:images": "node scripts/migrateImagesToBlob.mjs"
   },
   "dependencies": {
     "@vercel/blob": "^2.8.0",

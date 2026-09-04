@@ -1,22 +1,41 @@
 "use client";
 
-// Que pasa con la bandurriaaaaaaaaaaaa
-
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { FaWhatsapp } from "react-icons/fa";
-import { getCarPrimaryImage, getCatalogCars, whatsappNumber } from "../../cars";
+import { fallbackCarImage, getCarPrimaryImage, type Car, whatsappNumber } from "../../cars";
+import { loadCatalogCars } from "../../../lib/catalog-client";
 import styles from "../../page.module.css";
 
 export default function CarDetailPage() {
   const params = useParams<{ id: string }>();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const car = useMemo(
-    () => getCatalogCars().find((item) => item.id === Number(params.id)) ?? null,
-    [params.id]
-  );
+  const [car, setCar] = useState<Car | null>(null);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    void loadCatalogCars().then((cars) => {
+      if (cancelled) return;
+      setCar(cars.find((item) => item.id === Number(params.id)) ?? null);
+      setLoaded(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [params.id]);
+
+  if (!loaded) {
+    return (
+      <main className={styles.page}>
+        <section className={styles.detailSection}>
+          <p className={styles.emptyState}>Cargando publicación…</p>
+        </section>
+      </main>
+    );
+  }
 
   if (!car) {
     return (
@@ -34,7 +53,7 @@ export default function CarDetailPage() {
   }
 
   const galleryImages = Array.isArray(car.images) && car.images.length > 0 ? car.images : [getCarPrimaryImage(car)];
-  const currentImage = galleryImages[selectedImageIndex] ?? galleryImages[0] ?? "/imagenes%20de%20los%20autos/frente%20siena.jpg";
+  const currentImage = galleryImages[selectedImageIndex] ?? galleryImages[0] ?? fallbackCarImage;
 
   const goToPreviousImage = () => {
     setSelectedImageIndex((current) => (current === 0 ? galleryImages.length - 1 : current - 1));
@@ -65,7 +84,7 @@ export default function CarDetailPage() {
             </button>
 
             <Image
-              src={currentImage || "/imagenes%20de%20los%20autos/frente%20siena.jpg"}
+              src={currentImage || fallbackCarImage}
               alt={car.title}
               className={styles.detailImage}
               width={1200}
