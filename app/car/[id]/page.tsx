@@ -1,22 +1,20 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { FaWhatsapp } from "react-icons/fa";
-import { getCarPrimaryImage, getCatalogCars, type Car, whatsappNumber } from "../../cars";
+import { getCarPrimaryImage, getCatalogCars, whatsappNumber } from "../../cars";
 import styles from "../../page.module.css";
 
 export default function CarDetailPage() {
   const params = useParams<{ id: string }>();
-  const [car, setCar] = useState<Car | null>(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-
-  useEffect(() => {
-    const selectedCar = getCatalogCars().find((item) => item.id === Number(params.id));
-    setCar(selectedCar ?? null);
-    setSelectedImageIndex(0);
-  }, [params.id]);
+  const car = useMemo(
+    () => getCatalogCars().find((item) => item.id === Number(params.id)) ?? null,
+    [params.id]
+  );
 
   if (!car) {
     return (
@@ -64,15 +62,14 @@ export default function CarDetailPage() {
               ←
             </button>
 
-            <img
+            <Image
               src={currentImage || "/imagenes%20de%20los%20autos/frente%20siena.jpg"}
               alt={car.title}
               className={styles.detailImage}
-              loading="eager"
-              decoding="async"
-              onError={(event) => {
-                event.currentTarget.src = "/imagenes%20de%20los%20autos/frente%20siena.jpg";
-              }}
+              width={1200}
+              height={900}
+              unoptimized
+              priority
             />
 
             <button
@@ -95,7 +92,7 @@ export default function CarDetailPage() {
                   onClick={() => setSelectedImageIndex(index)}
                   aria-label={`Ver imagen ${index + 1}`}
                 >
-                  <img src={image} alt={`${car.title} ${index + 1}`} />
+                  <Image src={image} alt={`${car.title} ${index + 1}`} width={200} height={120} unoptimized />
                 </button>
               ))}
             </div>

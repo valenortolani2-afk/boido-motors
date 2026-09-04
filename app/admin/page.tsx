@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
@@ -312,7 +313,7 @@ export default function AdminCatalogPage() {
               <div className={styles.photoGrid}>
                 {draftImages.map((photo, index) => (
                   <div key={`${photo}-${index}`} className={styles.photoItem}>
-                    <img src={photo} alt={`Foto ${index + 1}`} />
+                    <Image src={photo} alt={`Foto ${index + 1}`} width={200} height={110} unoptimized />
                     <button type="button" onClick={() => handleRemoveImage(index)}>
                       Eliminar
                     </button>
@@ -352,7 +353,13 @@ export default function AdminCatalogPage() {
               {catalog.map((car) => (
                 <article key={car.id} className={styles.adminItem}>
                   <div className={styles.adminItemImageWrap}>
-                    <img src={car.images?.[0] || car.image || "/imagenes%20de%20los%20autos/volkswagen%20up.jpeg"} alt={car.title} />
+                    <Image
+                      src={car.images?.[0] || car.image || "/imagenes%20de%20los%20autos/volkswagen%20up.jpeg"}
+                      alt={car.title}
+                      fill
+                      sizes="(max-width: 640px) 100vw, 130px"
+                      unoptimized
+                    />
                   </div>
 
                   <div className={styles.adminItemContent}>

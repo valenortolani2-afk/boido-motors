@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -94,15 +95,13 @@ export default function Home() {
               }}
             >
               <div className={styles.cardImageWrap}>
-                <img
+                <Image
                   src={getCarPrimaryImage(car) || "/imagenes%20de%20los%20autos/frente%20siena.jpg"}
                   alt={car.title}
                   className={styles.cardImage}
-                  loading="lazy"
-                  decoding="async"
-                  onError={(event) => {
-                    event.currentTarget.src = "/imagenes%20de%20los%20autos/frente%20siena.jpg";
-                  }}
+                  fill
+                  sizes="(max-width: 900px) 100vw, 33vw"
+                  unoptimized
                 />
                 <span className={styles.badge}>{car.badge}</span>
               </div>

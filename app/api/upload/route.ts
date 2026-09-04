@@ -7,7 +7,6 @@ export async function POST(request: Request) {
   let put: typeof import("@vercel/blob").put | undefined;
 
   try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const mod = await import("@vercel/blob");
     put = mod.put;
   } catch (err) {
