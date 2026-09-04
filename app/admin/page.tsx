@@ -318,7 +318,14 @@ export default function AdminCatalogPage() {
               <div className={styles.photoGrid}>
                 {draftImages.map((photo, index) => (
                   <div key={`${photo}-${index}`} className={styles.photoItem}>
-                    <Image src={photo} alt={`Foto ${index + 1}`} width={200} height={110} unoptimized />
+                    <Image
+                      src={photo}
+                      alt={`Foto ${index + 1}`}
+                      fill
+                      sizes="110px"
+                      unoptimized
+                      style={{ objectFit: "cover" }}
+                    />
                     <button type="button" onClick={() => handleRemoveImage(index)}>
                       Eliminar
                     </button>
@@ -362,8 +369,9 @@ export default function AdminCatalogPage() {
                       src={car.images?.[0] || car.image || fallbackCarImage}
                       alt={car.title}
                       fill
-                      sizes="(max-width: 640px) 100vw, 130px"
+                      sizes="130px"
                       unoptimized
+                      style={{ objectFit: "cover" }}
                     />
                   </div>
 
