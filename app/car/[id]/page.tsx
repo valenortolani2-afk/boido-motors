@@ -1,5 +1,7 @@
 "use client";
 
+// Que pasa con la bandurriaaaaaaaaaaaa
+
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
