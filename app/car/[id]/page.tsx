@@ -65,9 +65,11 @@ export default function CarDetailPage() {
             </button>
 
             <img
-              src={currentImage}
+              src={currentImage || "/imagenes%20de%20los%20autos/frente%20siena.jpg"}
               alt={car.title}
               className={styles.detailImage}
+              loading="eager"
+              decoding="async"
               onError={(event) => {
                 event.currentTarget.src = "/imagenes%20de%20los%20autos/frente%20siena.jpg";
               }}

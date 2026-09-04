@@ -95,9 +95,11 @@ export default function Home() {
             >
               <div className={styles.cardImageWrap}>
                 <img
-                  src={getCarPrimaryImage(car)}
+                  src={getCarPrimaryImage(car) || "/imagenes%20de%20los%20autos/frente%20siena.jpg"}
                   alt={car.title}
                   className={styles.cardImage}
+                  loading="lazy"
+                  decoding="async"
                   onError={(event) => {
                     event.currentTarget.src = "/imagenes%20de%20los%20autos/frente%20siena.jpg";
                   }}
