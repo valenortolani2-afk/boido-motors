@@ -64,22 +64,22 @@ const catalogSeed: Car[] = [
       "Confort excepcional, tecnología avanzada y una presencia elegante que se destaca en cualquier entorno.",
   },
   {
-    id: 3,
-    title: "VOLKSWAGEN AMAROK 2017",
-    year: "2017",
-    price: "$0",
-    image: "/imagenes%20de%20los%20autos/frente%20amarok.jpeg",
-    images: [
-      "/imagenes%20de%20los%20autos/frente%20amarok.jpeg",
-      "/imagenes%20de%20los%20autos/baul%20amarok.jpeg",
-      "/imagenes%20de%20los%20autos/volante%20amarok.jpeg",
-    ],
+     id: 3,
+  title: "VOLKSWAGEN AMAROK 2017",
+  year: "2017",
+  price: "$0",
+  image: "/frente%20amarok.jpeg",
+  images: [
+    "/frente%20amarok.jpeg",
+    "/baul%20amarok.jpeg",
+    "/volante%20amarok.jpeg",
+  ],
     badge: "Oferta",
     km: "0 km",
     fuel: "Diésel",
     transmission: "manual",
     description:
-      "Pickup robusta, segura y muy funcional para trabajo y uso diario, con excelente presencia y equipamiento moderno.",
+      "Un vehículo equilibrado, cómodo y sofisticado con excelente equipamiento y un comportamiento muy refinado.",
   },
   {
     id: 4,
