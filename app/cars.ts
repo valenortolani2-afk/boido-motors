@@ -82,8 +82,7 @@ const catalogSeed: Car[] = [
     title: "FIAT SIENA 2013 FULL",
     year: "2013",
     price: "$10.000.000",
-    image: "/imagenes%20de%20los%20autos/frente%20siena.jpg"
-",
+    image: "/imagenes%20de%20los%20autos/frente%20siena.jpg",
     images: [
       "/imagenes%20de%20los%20autos/frente%20siena.jpg",
       "/imagenes%20de%20los%20autos/lateral%20derecho%20siena.jpg",
@@ -160,9 +159,58 @@ export const whatsappNumber = "542234060546";
 export const whatsappBaseMessage = encodeURIComponent("Hola, quiero consultar por un auto.");
 
 export const STORAGE_KEY = "boido-cars-v2";
-const LEGACY_STORAGE_KEYS = ["boido-cars-v1"];
+const LEGACY_STORAGE_KEYS = ["boido-cars-v1", "boido-cars-v0"];
 
-const defaultCatalog = () => dedupeCatalogCars(catalogSeed.map(normalizeCar));
+const isUsableCar = (car: Partial<Car> | null | undefined) => {
+  if (!car) return false;
+
+  const id = Number(car.id);
+  const title = String(car.title ?? "").trim();
+  const image = String(car.image ?? "").trim();
+  const images = normalizeCarImages(car.images);
+
+  return Number.isFinite(id) && id > 0 && (title.length > 0 || image.length > 0 || images.length > 0);
+};
+
+const hasAllBaseCatalogIds = (cars: Car[]) => {
+  const savedIds = new Set(cars.map((car) => Number(car.id)).filter(Number.isFinite));
+  return catalogSeed.every((car) => savedIds.has(Number(car.id)));
+};
+
+const sanitizeCatalogCars = (cars: Car[]) => {
+  const seen = new Map<number, Car>();
+
+  for (const rawCar of Array.isArray(cars) ? cars : []) {
+    const normalized = normalizeCar(rawCar);
+
+    if (!isUsableCar(normalized)) {
+      continue;
+    }
+
+    const id = Number(normalized.id);
+    const safeTitle = String(normalized.title ?? "").trim() || "Auto sin título";
+    const safeCar: Car = {
+      ...normalized,
+      id,
+      title: safeTitle,
+      image: getCarPrimaryImage(normalized),
+      images: normalizeCarImages(normalized.images).length > 0
+        ? normalizeCarImages(normalized.images)
+        : [getCarPrimaryImage(normalized)],
+      badge: String(normalized.badge ?? "").trim(),
+      km: String(normalized.km ?? "").trim(),
+      fuel: String(normalized.fuel ?? "").trim(),
+      transmission: String(normalized.transmission ?? "").trim(),
+      description: String(normalized.description ?? "").trim(),
+    };
+
+    seen.set(id, safeCar);
+  }
+
+  return [...seen.values()].sort((a, b) => Number(b.id) - Number(a.id));
+};
+
+const defaultCatalog = () => sanitizeCatalogCars(catalogSeed.map(normalizeCar));
 
 const clearLegacyCatalogStorage = () => {
   if (typeof window === "undefined") {
@@ -171,17 +219,24 @@ const clearLegacyCatalogStorage = () => {
 
   for (const key of LEGACY_STORAGE_KEYS) {
     try {
-      if (key !== STORAGE_KEY) {
-        window.localStorage.removeItem(key);
-      }
+      window.localStorage.removeItem(key);
     } catch {
       // Ignore storage access issues.
     }
   }
+
+  try {
+    const saved = window.localStorage.getItem(STORAGE_KEY);
+    if (saved && !saved.includes('"id"') && !saved.includes('"title"')) {
+      window.localStorage.removeItem(STORAGE_KEY);
+    }
+  } catch {
+    // Ignore storage access issues.
+  }
 };
 
 const writeCatalogToStorage = (cars: Car[]) => {
-  const normalized = dedupeCatalogCars(cars.map(normalizeCar));
+  const normalized = sanitizeCatalogCars(cars);
 
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
@@ -192,22 +247,7 @@ const writeCatalogToStorage = (cars: Car[]) => {
   return normalized;
 };
 
-export const dedupeCatalogCars = (cars: Car[]) => {
-  const seen = new Map<number, Car>();
-
-  for (const car of Array.isArray(cars) ? cars : []) {
-    const normalized = normalizeCar(car);
-    const id = Number(normalized.id);
-
-    if (!Number.isFinite(id)) {
-      continue;
-    }
-
-    seen.set(id, normalized);
-  }
-
-  return [...seen.values()].sort((a, b) => Number(b.id) - Number(a.id));
-};
+export const dedupeCatalogCars = (cars: Car[]) => sanitizeCatalogCars(cars);
 
 export const generateCarId = (cars: Car[] = []) => {
   const ids = cars.map((car) => Number(car.id)).filter(Number.isFinite);
@@ -228,22 +268,32 @@ export function getCatalogCars(): Car[] {
   try {
     clearLegacyCatalogStorage();
 
+    const baseCatalog = defaultCatalog();
     const saved = window.localStorage.getItem(STORAGE_KEY);
 
     if (!saved) {
-      const initial = defaultCatalog();
       try {
-        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(baseCatalog));
       } catch {
         // Ignore storage quota issues; keep using the in-memory catalog.
       }
-      return initial;
+      return baseCatalog;
     }
 
     try {
       const parsed = JSON.parse(saved) as Car[];
-      const normalized = Array.isArray(parsed) ? dedupeCatalogCars(parsed.map(normalizeCar)) : defaultCatalog();
-      const repaired = normalized.length > 0 ? normalized : defaultCatalog();
+      const parsedCars = Array.isArray(parsed) ? parsed : [];
+      const normalizedSaved = dedupeCatalogCars(parsedCars.map(normalizeCar));
+      const repaired = normalizedSaved.length > 0 ? normalizedSaved : baseCatalog;
+
+      if (!hasAllBaseCatalogIds(repaired)) {
+        try {
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(baseCatalog));
+        } catch {
+          // Ignore storage quota issues; keep using the in-memory catalog.
+        }
+        return baseCatalog;
+      }
 
       if (JSON.stringify(repaired) !== saved) {
         try {
@@ -255,13 +305,12 @@ export function getCatalogCars(): Car[] {
 
       return repaired;
     } catch {
-      const fallback = defaultCatalog();
       try {
-        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(fallback));
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(baseCatalog));
       } catch {
         // Ignore storage quota issues; keep using the in-memory catalog.
       }
-      return fallback;
+      return baseCatalog;
     }
   } catch {
     return defaultCatalog();
