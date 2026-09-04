@@ -65,17 +65,21 @@ const catalogSeed: Car[] = [
   },
   {
     id: 3,
-    title: "Audi A4",
-    year: "2020",
-    price: "$35.200",
-    image: "/imagenes%20de%20los%20autos/costado%20izquierda%20explorer.jpeg",
-    images: ["/imagenes%20de%20los%20autos/costado%20izquierda%20explorer.jpeg"],
+    title: "VOLKSWAGEN AMAROK 2017",
+    year: "2017",
+    price: "$0",
+    image: "/imagenes%20de%20los%20autos/frente%20amarok.jpeg",
+    images: [
+      "/imagenes%20de%20los%20autos/frente%20amarok.jpeg",
+      "/imagenes%20de%20los%20autos/baul%20amarok.jpeg",
+      "/imagenes%20de%20los%20autos/volante%20amarok.jpeg",
+    ],
     badge: "Oferta",
-    km: "30.000 km",
+    km: "0 km",
     fuel: "Diésel",
     transmission: "manual",
     description:
-      "Un vehículo equilibrado, cómodo y sofisticado con excelente equipamiento y un comportamiento muy refinado.",
+      "Pickup robusta, segura y muy funcional para trabajo y uso diario, con excelente presencia y equipamiento moderno.",
   },
   {
     id: 4,
@@ -105,8 +109,6 @@ const catalogSeed: Car[] = [
     image: "/imagenes%20de%20los%20autos/costado%20up.jpg",
     images: [
       "/imagenes%20de%20los%20autos/costado%20up.jpg",
-      "/imagenes%20de%20los%20autos/frente%20up.jpg",
-      "/imagenes%20de%20los%20autos/volante%20up.jpg"
     ],
     badge: "COMPACTO",
     km: "19.400 km",
