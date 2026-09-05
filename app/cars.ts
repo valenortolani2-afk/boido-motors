@@ -184,7 +184,7 @@ const hasAllBaseCatalogIds = (cars: Car[]) => {
   return catalogSeed.every((car) => savedIds.has(Number(car.id)));
 };
 
-const sanitizeCatalogCars = (cars: Car[]) => {
+export const sanitizeCatalogCars = (cars: Car[]) => {
   const seen = new Map<number, Car>();
 
   for (const rawCar of Array.isArray(cars) ? cars : []) {
@@ -217,7 +217,7 @@ const sanitizeCatalogCars = (cars: Car[]) => {
   return [...seen.values()].sort((a, b) => Number(b.id) - Number(a.id));
 };
 
-const defaultCatalog = () => sanitizeCatalogCars(catalogSeed.map(normalizeCar));
+export const defaultCatalog = () => sanitizeCatalogCars(catalogSeed.map(normalizeCar));
 
 const clearLegacyCatalogStorage = () => {
   if (typeof window === "undefined") {
