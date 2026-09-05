@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { GoogleAnalytics } from "../components/GoogleAnalytics";
 import { GoogleTagManager, GoogleTagManagerNoscript } from "../components/GoogleTagManager";
 import "./globals.css";
 
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body>
         <GoogleTagManagerNoscript />
         <GoogleTagManager />
+        <GoogleAnalytics />
         {children}
       </body>
     </html>
