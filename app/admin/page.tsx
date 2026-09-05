@@ -28,6 +28,39 @@ const emptyCar: DraftCar = {
   description: "",
 };
 
+class MissingFieldError extends Error {
+  constructor(fieldLabel: string) {
+    super(`Falta completar el campo "${fieldLabel}".`);
+    this.name = "MissingFieldError";
+  }
+}
+
+const REQUIRED_DRAFT_FIELDS: [keyof DraftCar, string][] = [
+  ["title", "Título"],
+  ["year", "Año"],
+  ["price", "Precio"],
+  ["badge", "Badge"],
+  ["km", "Kilometraje"],
+  ["fuel", "Combustible"],
+  ["transmission", "Transmisión"],
+  ["description", "Descripción"],
+];
+
+const validateDraft = (draft: DraftCar) => {
+  const errors = REQUIRED_DRAFT_FIELDS.filter(
+    ([key]) => !String(draft[key] ?? "").trim()
+  ).map(([, label]) => new MissingFieldError(label));
+
+  const hasImages = draft.images.some((image) => image.trim()) || draft.image.trim();
+  if (!hasImages) {
+    errors.push(new MissingFieldError("Imágenes"));
+  }
+
+  if (errors.length > 0) {
+    throw new AggregateError(errors, "Hay campos obligatorios sin completar.");
+  }
+};
+
 const uploadDraftFiles = async (files: File[]) => {
   const formData = new FormData();
   files.forEach((file) => formData.append("file", file));
@@ -137,7 +170,16 @@ export default function AdminCatalogPage() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!draft.title.trim()) return;
+    try {
+      validateDraft(draft);
+    } catch (error) {
+      if (error instanceof AggregateError) {
+        window.alert(error.errors.map((fieldError: Error) => fieldError.message).join("\n"));
+      } else if (error instanceof Error) {
+        window.alert(error.message);
+      }
+      return;
+    }
 
     const cleanedImages = [...new Set(draftImages.map((item) => item.trim()).filter(Boolean))];
     const normalizedDraft: Omit<Car, "id"> = {

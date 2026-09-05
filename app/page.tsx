@@ -49,7 +49,7 @@ export default function Home() {
 
         <div className={styles.heroContent}>
           <p className={styles.eyebrow}>Venta directa • 0KM y usados</p>
-          <h1 className={"titulo-principal"}>VENTA PERMUTA FINANCIACION DE AUTOS USADOS</h1>
+          <h1 className={"titulo-principal"}>VENTA PERMUTA FINANCIACION DE AUTOS USADOS Y CONSIGNACION</h1>
           <p className={styles.heroText}>
             Encontrá el vehículo que se adapte a tu estilo, tu rutina y tu próxima aventura.
           </p>
