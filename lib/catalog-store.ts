@@ -78,10 +78,10 @@ export async function writeCatalogToBlob(cars: Car[]) {
 
 export async function getPersistedCatalog(): Promise<Car[]> {
   const fromBlob = await readCatalogFromBlob();
-  if (fromBlob && fromBlob.length > 0) return fromBlob;
+  if (fromBlob !== null) return fromBlob;
 
   const fromFile = await readLocalCatalogFile();
-  if (fromFile && fromFile.length > 0) return fromFile;
+  if (fromFile !== null) return fromFile;
 
   return defaultCatalog();
 }

@@ -194,6 +194,11 @@ export default function AdminCatalogPage() {
   };
 
   const handleDelete = async (carId: number) => {
+    const car = catalog.find((item) => item.id === carId);
+    if (!car || !window.confirm(`¿Eliminar la publicación "${car.title}"?`)) {
+      return;
+    }
+
     const nextCatalog = catalog.filter((car) => car.id !== carId);
     setSaving(true);
     try {
