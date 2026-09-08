@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaWhatsapp } from "react-icons/fa";
-import { getCarPrimaryImage, type Car, whatsappBaseMessage, whatsappNumber } from "./cars";
+import { getCarPrimaryImage, type Car, whatsappLink, whatsappNumber } from "./cars";
 import { loadCatalogCars } from "../lib/catalog-client";
 import styles from "./page.module.css";
 
@@ -41,7 +41,7 @@ export default function Home() {
           <div className={styles.brand}>AUTOCLUB</div>
           <div className={styles.navActions}>
             <a href="#catalogo">Catálogo</a>
-            <a href={`https://wa.me/${whatsappNumber}?text=${whatsappBaseMessage}`} target="_blank" rel="noreferrer">
+            <a href={whatsappLink} target="_blank" rel="noreferrer">
               WhatsApp
             </a>
           </div>
@@ -59,7 +59,7 @@ export default function Home() {
               Ver catálogo
             </a>
             <a
-              href={`https://wa.me/${whatsappNumber}?text=${whatsappBaseMessage}`}
+              href={whatsappLink}
               target="_blank"
               rel="noreferrer"
               className={styles.secondaryButton}
@@ -164,7 +164,7 @@ export default function Home() {
             <h3>Navegación</h3>
             <ul>
               <li><a href="#catalogo">Catálogo</a></li>
-              <li><a href={`https://wa.me/${whatsappNumber}?text=${whatsappBaseMessage}`} target="_blank" rel="noreferrer">WhatsApp</a></li>
+              <li><a href={whatsappLink} target="_blank" rel="noreferrer">WhatsApp</a></li>
             </ul>
           </div>
 
@@ -194,7 +194,7 @@ export default function Home() {
       </footer>
 
       <a
-        href={`https://wa.me/${whatsappNumber}?text=${whatsappBaseMessage}`}
+        href={whatsappLink}
         target="_blank"
         rel="noreferrer"
         className={styles.floatingWhatsApp}

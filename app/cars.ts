@@ -164,6 +164,7 @@ export const localImage = (filename: string) =>
 
 export const whatsappNumber = "542234060546";
 export const whatsappBaseMessage = encodeURIComponent("Hola, quiero consultar por un auto.");
+export const whatsappLink = "https://wa.me/message/ZISNIKKU3ZJIH1";
 
 export const STORAGE_KEY = "boido-cars-v2";
 const LEGACY_STORAGE_KEYS = ["boido-cars-v1", "boido-cars-v0"];

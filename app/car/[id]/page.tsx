@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaWhatsapp } from "react-icons/fa";
-import { fallbackCarImage, getCarPrimaryImage, type Car, whatsappNumber } from "../../cars";
+import { fallbackCarImage, getCarPrimaryImage, type Car, whatsappLink } from "../../cars";
 import { loadCatalogCars } from "../../../lib/catalog-client";
 import styles from "../../page.module.css";
 
@@ -148,9 +148,7 @@ export default function CarDetailPage() {
 
           <div className={styles.detailActions}>
             <a
-              href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-                `Hola, me interesa el auto ${car.title}.`
-              )}`}
+              href={whatsappLink}
               target="_blank"
               rel="noreferrer"
               className={styles.whatsAppDetailButton}
