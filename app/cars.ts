@@ -163,7 +163,6 @@ export const localImage = (filename: string) =>
   `/imagenes%20de%20los%20autos/${encodeURIComponent(filename)}`;
 
 export const whatsappNumber = "542234060546";
-export const whatsappBaseMessage = encodeURIComponent("Hola, quiero consultar por un auto.");
 export const whatsappLink = "https://wa.me/message/ZISNIKKU3ZJIH1";
 
 export const STORAGE_KEY = "boido-cars-v2";
